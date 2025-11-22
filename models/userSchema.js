@@ -12,6 +12,12 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    categories: [
+      {
+        name: String,
+        color: String,
+      },
+    ],
   },
   { timestamps: true }
 );
