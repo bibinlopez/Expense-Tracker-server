@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 
 import authRoute from "./routes/authRoutes.js";
+import categoryRoute from "./routes/categoryRoutes.js";
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/auth", authRoute);
+app.use("/category", categoryRoute);
 
 app.use((err, req, res, next) =>
   res

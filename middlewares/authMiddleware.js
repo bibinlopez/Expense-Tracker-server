@@ -20,7 +20,7 @@ const authMiddleware = async (req, res, next) => {
 
   const { userId, email } = payload;
 
-  req.user = { userId, name };
+  req.user = { userId, email };
 
   next();
 };

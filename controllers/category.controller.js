@@ -1,27 +1,65 @@
 import CustomError from "../error/custom-error.js";
 import userSchema from "../models/userSchema.js";
-import { categorySchema, subcategorySchema } from "../models/categorySchema.js";
+import categorySchema from "../models/categorySchema.js";
 
 export const addCategory = async (req, res) => {
   const { userId } = req.user;
+  console.log(userId);
+
   const { name, color, budget, date } = req.body;
 
   if (!name || !color || !date) {
     throw new CustomError("please provide values", 400);
   }
+  const { month, year } = date;
 
-  const category = await categorySchema.create({
-    name,
-    color,
-    budget,
-    date,
+  // checking categories for this month existing,
+  const categories = await categorySchema.find({
     user: userId,
+    "date.month": month,
+    "date.year": year,
   });
+  let user = await userSchema.findById(userId);
+
+  user = user.toObject();
+
+  if (categories.lenth > 0) {
+    // exists the categories
+    const category = await categorySchema.create({
+      name,
+      color,
+      budget,
+      date,
+      user: userId,
+    });
+  } else {
+    console.log("in else");
+
+    let insertArray = [];
+    if (user?.categories?.length > 0) {
+      insertArray = user.categories.map((category) => {
+        return { ...category, user: userId, date };
+      });
+    }
+
+    insertArray.push({ name, color, budget, user: userId, date });
+    console.log({ insertArray });
+
+    const categories = await categorySchema.insertMany(insertArray);
+    console.log("categories created");
+  }
+  const dateObj = new Date();
+
+  if (dateObj.getMonth() === month && dateObj.getFullYear() === year) {
+    await userSchema.findByIdAndUpdate(userId, {
+      $push: { categories: { name, color } },
+    });
+    console.log("user updated with new category");
+  }
 
   return res.status(200).json({
     success: true,
     message: "Category added successfully",
-    category,
   });
 };
 
@@ -31,8 +69,8 @@ export const getAllCategories = async (req, res) => {
 
   const categories = await categorySchema.find({
     user: userId,
-    "date.month": month,
-    "date.year": year,
+    "date.month": Number(month),
+    "date.year": Number(year),
   });
 
   return res.status(200).json({

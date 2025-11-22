@@ -33,4 +33,4 @@ const categorySchema = new mongoose.Schema(
   { timestamps: true }
 );
 categorySchema;
-export default mongoose.model("Expense", categorySchema);
+export default mongoose.model("Category", categorySchema);
