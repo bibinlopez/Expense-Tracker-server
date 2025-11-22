@@ -4,6 +4,8 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 
+import authRoute from "./routes/authRoutes.js";
+
 const app = express();
 
 app.use(express.json());
@@ -13,6 +15,8 @@ app.use(cors());
 app.get("/", (req, res) => {
   res.send("Welcome to api landing page..");
 });
+
+app.use("/auth", authRoute);
 
 app.use((err, req, res, next) =>
   res
