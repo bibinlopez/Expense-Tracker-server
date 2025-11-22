@@ -3,6 +3,15 @@ import userSchema from "../models/userSchema.js";
 
 export const auth = async (req, res) => {
   const { email, password } = req.body;
+  console.log({ email });
+
+  if (!email || !password) {
+    throw new CustomError("Please provide credentials...");
+  }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    throw new CustomError("Invalid Email provided!!!");
+  }
 
   let user = await userSchema.findOne({ email });
 
@@ -26,7 +35,7 @@ export const auth = async (req, res) => {
 
   return res.status(200).json({
     success: true,
-    message: userExists ? `Welcome to Expense Tracker !!!` : `Welcome back !!!`,
+    message: !userExists ? `Welcome to Expense Tracker !` : `Welcome back!!!`,
     token,
     user: {
       id: user.id,

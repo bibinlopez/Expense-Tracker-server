@@ -21,7 +21,7 @@ userSchema.methods.createJWT = function () {
     { userId: this._id, email: this.email },
     process.env.JWT_SECRET,
     {
-      expiresIn: "7d",
+      expiresIn: "14d",
     }
   );
 };
