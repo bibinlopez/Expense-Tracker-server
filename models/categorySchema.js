@@ -32,5 +32,7 @@ const categorySchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-categorySchema;
+
+categorySchema.index({ "date.year": 1, "date.month": 1 });
+
 export default mongoose.model("Category", categorySchema);

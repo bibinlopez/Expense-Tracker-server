@@ -6,6 +6,7 @@ import cors from "cors";
 
 import authRoute from "./routes/authRoutes.js";
 import categoryRoute from "./routes/categoryRoutes.js";
+import categorySchema from "./models/categorySchema.js";
 
 const app = express();
 
@@ -33,6 +34,7 @@ const start = async () => {
     await mongoose.connect(process.env.MONGO_URI, {
       dbName: "expense-tracker",
     });
+
     console.log("CONNECTED TO THE DB...");
     app.listen(port, console.log(`Server is listening on the port ${port}`));
   } catch (error) {

@@ -16,14 +16,18 @@ export const addCategory = async (req, res) => {
   // checking categories for this month existing,
   const categories = await categorySchema.find({
     user: userId,
-    "date.month": month,
-    "date.year": year,
+    "date.month": Number(month),
+    "date.year": Number(year),
   });
   let user = await userSchema.findById(userId);
 
   user = user.toObject();
 
-  if (categories.lenth > 0) {
+  console.log({ categories });
+
+  if (categories.length > 0) {
+    console.log("exists ceadfasdf");
+
     // exists the categories
     const category = await categorySchema.create({
       name,
@@ -38,6 +42,7 @@ export const addCategory = async (req, res) => {
     let insertArray = [];
     if (user?.categories?.length > 0) {
       insertArray = user.categories.map((category) => {
+        delete category._id;
         return { ...category, user: userId, date };
       });
     }
@@ -50,7 +55,7 @@ export const addCategory = async (req, res) => {
   }
   const dateObj = new Date();
 
-  if (dateObj.getMonth() === month && dateObj.getFullYear() === year) {
+  if (dateObj.getMonth() + 1 === month && dateObj.getFullYear() === year) {
     await userSchema.findByIdAndUpdate(userId, {
       $push: { categories: { name, color } },
     });
@@ -76,5 +81,19 @@ export const getAllCategories = async (req, res) => {
   return res.status(200).json({
     success: true,
     categories,
+  });
+};
+export const getCategory = async (req, res) => {
+  const { userId } = req.user;
+  const { id } = req.params;
+
+  const category = await categorySchema.findOne({
+    user: userId,
+    _id: id,
+  });
+
+  return res.status(200).json({
+    success: true,
+    category,
   });
 };
